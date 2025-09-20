@@ -4,12 +4,16 @@ import 'constants.dart';
 import 'dart:math';
 
 class OverlayScreen extends StatelessWidget {
-  const OverlayScreen({Key? key}) : super(key: key);
+  const OverlayScreen({super.key});
+
+  String _getRandomPrompt() {
+    final random = Random();
+    return breakPrompts[random.nextInt(breakPrompts.length)];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final random = Random();
-    final prompt = breakPrompts[random.nextInt(breakPrompts.length)];
+    final prompt = _getRandomPrompt();
 
     return Material(
       color: Colors.transparent,

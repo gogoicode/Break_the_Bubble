@@ -19,14 +19,17 @@ void callbackDispatcher() {
       // Phone inactive for more than 10s, reset
       continuousTime = 0;
     } else {
-      continuousTime++;
+      continuousTime += delta ~/ 60000;
     }
+    lastActiveTime = now;
+    await prefs.setInt('continuousTime', continuousTime);
+    await prefs.setInt('lastActiveTime', lastActiveTime);
 
-    if (continuousTime >= threshold * 60) {
+    final bool permissionGranted = prefs.getBool('permissionGranted') ?? false;
+
+    if (permissionGranted && continuousTime >= threshold) {
       continuousTime = 0;
       await prefs.setInt('continuousTime', 0);
-
-      // 🔔 Trigger the overlay popup
       await FlutterOverlayWindow.showOverlay(
         alignment: OverlayAlignment.center,
         enableDrag: false,
@@ -34,10 +37,6 @@ void callbackDispatcher() {
         width: 300,
       );
     }
-
-    await prefs.setInt('continuousTime', continuousTime);
-    await prefs.setInt('lastActiveTime', now);
-
     return Future.value(true);
   });
 }

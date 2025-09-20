@@ -5,6 +5,7 @@ import 'constants.dart';
 class SettingsModal extends StatefulWidget {
   final int initialThreshold;
   final Function(int) onSave;
+
   const SettingsModal({
     super.key,
     required this.initialThreshold,
@@ -16,13 +17,15 @@ class SettingsModal extends StatefulWidget {
 }
 
 class _SettingsModalState extends State<SettingsModal> {
-  final TextEditingController _thresholdController = TextEditingController();
-  String? _errorText;
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _thresholdController;
 
   @override
   void initState() {
     super.initState();
-    _thresholdController.text = widget.initialThreshold.toString();
+    _thresholdController = TextEditingController(
+      text: widget.initialThreshold.toString(),
+    );
   }
 
   @override
@@ -32,14 +35,8 @@ class _SettingsModalState extends State<SettingsModal> {
   }
 
   void _saveSettings() {
-    final input = _thresholdController.text;
-    final parsedInput = int.tryParse(input);
-
-    if (parsedInput == null || parsedInput <= 0) {
-      setState(() {
-        _errorText = 'Please enter a valid number greater than 0';
-      });
-    } else {
+    if (_formKey.currentState?.validate() ?? false) {
+      final parsedInput = int.parse(_thresholdController.text);
       widget.onSave(parsedInput);
       Navigator.of(context).pop();
     }
@@ -48,69 +45,79 @@ class _SettingsModalState extends State<SettingsModal> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
-        decoration: const BoxDecoration(
-          color: bubbleBlueBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Settings',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Adjust Break Reminder',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: bubbleBluePrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Set break interval (minutes):',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _thresholdController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              decoration: InputDecoration(
-                labelText: 'Minutes',
-                hintText: 'e.g., 30',
-                errorText: _errorText,
-                border: const OutlineInputBorder(),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: bubbleBlueSecondary),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black26),
-                ),
+              const SizedBox(height: 20),
+              const Text(
+                'Enter the number of minutes after which a break reminder will appear.',
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _thresholdController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                decoration: InputDecoration(
+                  labelText: 'Minutes',
+                  hintText: 'e.g., 30',
+                  border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: bubbleBlueSecondary),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black26),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed: _saveSettings,
-                  child: const Text('Save', style: TextStyle(color: bubbleBlueSecondary)),
-                ),
-              ],
-            ),
-          ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a number.';
+                  }
+                  final parsed = int.tryParse(value);
+                  if (parsed == null || parsed <= 0) {
+                    return 'Please enter a valid number greater than 0.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel',
+                        style: TextStyle(color: Colors.red)),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _saveSettings,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: bubbleBluePrimary,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
