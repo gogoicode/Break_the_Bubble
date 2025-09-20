@@ -236,19 +236,21 @@ class _BreakTheBubbleHomePageState extends State<BreakTheBubbleHomePage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildStatsDisplay(),
-              const SizedBox(height: 24),
-              _buildTimerDisplay(),
-              const SizedBox(height: 24),
-              _buildControlButtons(),
-              const SizedBox(height: 24),
-              _buildActionsList(),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildStatsDisplay(),
+                const SizedBox(height: 24),
+                _buildTimerDisplay(),
+                const SizedBox(height: 24),
+                _buildControlButtons(),
+                const SizedBox(height: 24),
+                _buildActionsList(),
+              ],
+            ),
           ),
         ),
       ),

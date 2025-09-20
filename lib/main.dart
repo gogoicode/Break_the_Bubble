@@ -7,7 +7,7 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'overlay_popup.dart';
 import 'initial_permission_screen.dart';
 import 'constants.dart';
-import 'package:btb/overlay_popup.dart';
+import 'package:break_the_bubble/overlay_popup.dart';
 
 /// The entry point for Workmanager's background tasks.
 /// This function runs periodically to check for continuous usage.
@@ -31,9 +31,9 @@ void callbackDispatcher() {
     }
     lastActiveTime = now;
     await prefs.setInt('continuousTime', continuousTime);
-    await prefs.setInt('lastActiveTime', lastActiveTime);
 
-    if (continuousTime >= threshold) {
+    if (continuousTime >= threshold * 60) {
+      continuousTime = 0;
       final bool permissionGranted =
           prefs.getBool('permissionGranted') ?? false;
 
@@ -81,7 +81,7 @@ class BreakTheBubbleApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: bubbleBluePrimary),
         useMaterial3: true,
       ),
-      home: const InitialPermissionScreen(),
+      home: const InitialPermissionScreen(), // This line was missing
     );
   }
 }

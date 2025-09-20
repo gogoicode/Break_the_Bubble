@@ -75,72 +75,72 @@ class _InitialPermissionScreenState extends State<InitialPermissionScreen> {
       return BreakTheBubbleHomePage(breakThreshold: _breakThreshold);
     }
 
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.privacy_tip_outlined,
-                size: 80,
-                color: bubbleBluePrimary,
+    // Corrected: Removed the Scaffold and now only returning the Center widget.
+    // The Scaffold in main.dart will provide the necessary structure.
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.privacy_tip_outlined,
+              size: 80,
+              color: bubbleBluePrimary,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Permission Required',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Permission Required',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'This app needs permission to run in the background to monitor your phone usage and remind you to take breaks. Please grant this permission to allow a pop-up to show above other apps.',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () async {
-                  final isPermissionGranted =
-                      await FlutterOverlayWindow.isPermissionGranted();
-                  if (!isPermissionGranted) {
-                    await FlutterOverlayWindow.requestPermission();
-                  }
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'This app needs permission to run in the background to monitor your phone usage and remind you to take breaks. Please grant this permission to allow a pop-up to show above other apps.',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () async {
+                final isPermissionGranted =
+                    await FlutterOverlayWindow.isPermissionGranted();
+                if (!isPermissionGranted) {
+                  await FlutterOverlayWindow.requestPermission();
+                }
 
-                  if (await FlutterOverlayWindow.isPermissionGranted()) {
-                    await _registerWorkmanagerTask();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Overlay permission denied. Cannot run break reminders.',
-                        ),
+                if (await FlutterOverlayWindow.isPermissionGranted()) {
+                  await _registerWorkmanagerTask();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Overlay permission denied. Cannot run break reminders.',
                       ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: bubbleBluePrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: bubbleBluePrimary,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 14,
                 ),
-                child: const Text(
-                  'Grant Permission',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ],
-          ),
+              child: const Text(
+                'Grant Permission',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
     );

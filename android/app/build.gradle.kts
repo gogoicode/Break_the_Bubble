@@ -51,7 +51,7 @@ android {
 }
 
 flutter {
-    file("../..")
+    source = "../.."
 }
 
 dependencies {
