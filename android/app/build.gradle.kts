@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -49,9 +51,10 @@ android {
 }
 
 flutter {
-    source("../..")
+    file("../..")
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0")
+    // This will automatically use the correct Kotlin version from the parent build.gradle
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
